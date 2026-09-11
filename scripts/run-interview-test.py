@@ -221,8 +221,19 @@ def main():
             msg = "iniciar bot-memory-kit"
         else:
             last = st["last_question"].lower()
+            # Warm-start: cartão de confirmação de fatos (itens numerados 'a confirmar')
+            confirm_msg, corrections = detect_and_answer_confirmation(
+                st["last_question"], persona, st)
+            if confirm_msg:
+                st["qa"][f"q{len(st['qa']) + 1}"] = {
+                    "question": st["last_question"], "answer": confirm_msg}
+                st["warm_start"] = True
+                print(f"\n[round {st['round']}] WARM-START: cartão de confirmação detectado "
+                      f"({len(st['known_facts'])} fatos)")
+                print(f"[round {st['round']}] A: {confirm_msg[:200]}")
+                msg = confirm_msg
             # Gates de aprovação — o persona aprova quando o escopo é coerente
-            if ("aprova" in last or "aprovar" in last or last.startswith("aprova")) and "escopo" in last or "aprova" in last[:12]:
+            elif ("aprova" in last or "aprovar" in last or last.startswith("aprova")) and "escopo" in last or "aprova" in last[:12]:
                 ans = "Aprovo, com a condição já dita: toda alteração em produção, mensagem a cliente ou mudança de DNS/infra depende da minha aprovação explícita. Pode seguir."
                 st["qa"][f"q{len(st['qa']) + 1}"] = {"question": st["last_question"], "answer": ans}
                 print(f"\n[round {st['round']}] GATE: {st['last_question'][:90]}")
@@ -283,6 +294,62 @@ def main():
     print(f"\n[harness] rounds: {st.get('round')} | respostas: {len(st.get('qa', {}))} "
           f"| pergunta atual: {st.get('question_num', 0)}/18 | done: {st.get('done')}")
     print(f"[harness] estado: {state_path(hm)}")
+
+
+def parse_facts_and_respond(fact_lines, persona, st):
+    """Warm-start: o skill lista fatos 'a confirmar' com numeração.
+    Gera respostas do persona: confirma a maioria, corrige um item, marca um obsoleto.
+    Retorna (msg, ledger_entries)."""
+    import re as _re
+    facts = []
+    for l in fact_lines:
+        m = _re.match(r"^\s*(\d+)\.\s*\*\*(.+?)\*\*", l) or _re.match(r"^\s*(\d+)\.\s*(.+)", l)
+        if m:
+            facts.append((int(m.group(1)), m.group(2).strip().rstrip("*").strip()))
+    if not facts:
+        return None, []
+
+    corrections = []
+    answers = []
+    # Corrige o 1º fato cujo texto menciona 'VPS' — inventa detalhe novo (24/7 na Oracle)
+    corrected = False
+    for num, text in facts:
+        low = text.lower()
+        if not corrected and ("vps" in low or "oracle" in low):
+            answers.append(f"Corrija o item {num}: a VPS Oracle é ARM e roda 24/7, o resto certo.")
+            corrections.append({"num": num, "old": text, "new": "VPS Oracle ARM, sempre ligada", "action": "corrected"})
+            corrected = True
+        elif "hobby" in low or ("mac" in low and "notebook" in low):
+            # marca um como obsoleto se houver 2º item de máquina/hobby — senão confirma
+            answers.append(f"O item {num} já não vale mais — atualizei o equipamento no ano passado, ignore essa máquina.")
+            corrections.append({"num": num, "old": text, "action": "obsolete"})
+        else:
+            answers.append(f"Item {num} confirmado.")
+
+    st.setdefault("known_facts", {})
+    st.setdefault("corrections", [])
+    for num, text in facts:
+        st["known_facts"][str(num)] = {"fact": text, "status": "confirmed",
+                                        "verified_at": time.strftime("%Y-%m-%d")}
+    for c in corrections:
+        if c["action"] == "corrected":
+            st["known_facts"][str(c["num"])] = {"fact": c["new"], "status": "confirmed",
+                                                 "previous": c["old"], "verified_at": time.strftime("%Y-%m-%d")}
+        elif c["action"] == "obsolete":
+            st["known_facts"][str(c["num"])] = {"fact": c.get("old", ""), "status": "obsolete"}
+    return " | ".join(answers), corrections
+
+
+def detect_and_answer_confirmation(question, persona, st):
+    """Detecta cartão de confirmação warm-start (itens numerados 'a confirmar')."""
+    lines = question.splitlines()
+    numbered = [l for l in lines if re.match(r"^\s*\d+\.", l)]
+    wants_confirm = any(w in question.lower() for w in
+                        ["confirma", "corrija", "a confirmar", "está correto", "cartão"])
+    if numbered and wants_confirm:
+        msg, corrections = parse_facts_and_respond(numbered, persona, st)
+        return msg, corrections
+    return None, []
 
 
 def persona_answer(question, persona, used_keys):

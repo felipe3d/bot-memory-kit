@@ -47,6 +47,12 @@ INTENT → INTERVIEW → SCOPE_APPROVED → CONSENT_PER_HOST → DISCOVERY
 
 Conduct an adaptive interview about the user's work, personal life, hobbies, routines, information sources, privacy, and autonomy. Save progress to `checkpoint.json` in the workspace directory after every question and answer.
 
+**"iniciar" vs. completed run:** if the previous run reached `COMPLETE`, it is CLOSED. "iniciar bot-memory-kit" then starts a **new run** with a fresh checkpoint (the old one is kept as reference in `bmk-backups/`) — never resume a completed run, never auto-answer pending questions from it, never use its checkpoint as the new run's state. Continue an old run ONLY when the user explicitly says "retomar bot-memory-kit" AND the checkpoint phase is an active one (not COMPLETE/BLOCKED-final).
+
+**Warm-start (obligatory when prior knowledge exists):** before Block 1, check what you already know — memory injected in the system prompt (`USER.md`/`MEMORY.md`) and, if consented, the canonical vault. If anything is known, open with the **confirmation card** (see `templates/interview.md`): list each known fact with its source and date, marked as hypothesis to confirm, and ask the user to confirm or correct. Facts confirmed → `known_facts` with `verified_at`; corrections → `corrections[]` with the old value `superseded` (never deleted); blocks 4–5 are NEVER confirmed from memory. If nothing is known, start cold with Block 1.
+
+**Never auto-answer (single-query mode):** if no user is available to answer a question (e.g. `chat -q` with nobody present), do NOT assume answers or continue with "documented judgment". STOP and wait: mark `blocked_reason: awaiting_user_input` in the checkpoint and end the turn. An interview without a respondent produces nothing — assumptions are what the kit exists to avoid.
+
 **Rules:**
 1. Ask ONE question at a time. Wait for the answer before proceeding.
 2. After each answer, save the question, answer, and current state to `checkpoint.json`.
