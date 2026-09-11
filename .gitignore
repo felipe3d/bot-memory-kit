@@ -10,3 +10,6 @@ __pycache__/
 private/
 state/
 backups/
+# Sandboxes de teste (HERMES_HOME isolado) — nunca versionar runtime
+test-homes/
+tmp/
