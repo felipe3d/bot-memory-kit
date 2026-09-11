@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://hermes-agent.nousresearch.com/docs/user-guide/profiles",
+      "title": "",
+      "accessed": "2026-09-10"
+    },
+    {
+      "id": 2,
+      "url": "https://hermes-agent.nousresearch.com/docs/user-guide/features/memory",
+      "title": "",
+      "accessed": "2026-09-10"
+    },
+    {
+      "id": 3,
+      "url": "https://hermes-agent.nousresearch.com/docs/user-guide/features/skills",
+      "title": "",
+      "accessed": "2026-09-10"
+    },
+    {
+      "id": 4,
+      "url": "https://hermes-agent.nousresearch.com/docs/user-guide/profile-distributions",
+      "title": "",
+      "accessed": "2026-09-10"
+    },
+    {
+      "id": 5,
+      "url": "https://hermes-agent.nousresearch.com/docs/user-guide/sessions",
+      "title": "",
+      "accessed": "2026-09-10"
+    },
+    {
+      "id": 6,
+      "url": "https://hermes-agent.nousresearch.com/docs/user-guide/checkpoints-and-rollback",
+      "title": "",
+      "accessed": "2026-09-10"
+    },
+    {
+      "id": 7,
+      "url": "https://hermes-agent.nousresearch.com/docs/user-guide/security",
+      "title": "",
+      "accessed": "2026-09-10"
+    },
+    {
+      "id": 8,
+      "url": "https://hermes-agent.nousresearch.com/docs/user-guide/desktop",
+      "title": "",
+      "accessed": "2026-09-10"
+    }
+  ]
+}
