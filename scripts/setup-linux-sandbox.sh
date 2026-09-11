@@ -72,6 +72,7 @@ log "Configurando provider=$PROVIDER model=$MODEL..."
 docker run --rm \
   -v "$SANDBOX_DIR:/hermes-home" \
   -e HERMES_HOME=/hermes-home \
+  -e HERMES_WRITE_SAFE_ROOT=/hermes-home \
   -e PROVIDER="$PROVIDER" -e MODEL="$MODEL" \
   -e PY="$_CONFIGURE_PY" \
   --entrypoint sh "$IMAGE" -c '
@@ -96,6 +97,7 @@ if [ "$ACTION" = "chat" ]; then
   docker run --rm \
     -v "$SANDBOX_DIR:/hermes-home" \
     -e HERMES_HOME=/hermes-home \
+    -e HERMES_WRITE_SAFE_ROOT=/hermes-home \
     -e OLLAMA_API_KEY \
     -e CHAT_QUERY \
     --entrypoint sh "$IMAGE" -c 'timeout 120 hermes chat -q "$CHAT_QUERY" -Q' 2>&1
