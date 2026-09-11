@@ -39,7 +39,7 @@ Any other mention of memory, bots, or profiles does NOT start the kit. Respond n
 
 ```
 INTENT → INTERVIEW → SCOPE_APPROVED → CONSENT_PER_HOST → DISCOVERY
-  → SELECTION → ARCHITECTURE → PLAN_READY
+  → SELECTION → VAULT_SETUP → ARCHITECTURE → PLAN_READY
   → WAITING_IMPLEMENTATION_APPROVAL → APPLY → VERIFY → COMPLETE
 ```
 
@@ -105,6 +105,19 @@ All durable kit artifacts share one mandatory location — **`<HERMES_HOME>/bmk-
 
 FORBIDDEN: the skill directory and container-ephemeral paths (`/opt/data`, `/tmp`) — they vanish between runs and the artifact is lost (observed 2026-09-11: the approved PLAN.md written to `/opt/data/bmk-workspace/` was destroyed when the container ephemeral layer reset; only the textual evidence inside the checkpoint survived). Write the plan to the durable path at PLAN_READY, and again after every approval that changes it.
 
+### Phase: VAULT_SETUP (between SELECTION and ARCHITECTURE)
+
+Configure the canonical knowledge vault (Obsidian or plain Markdown). Run `scripts/setup-vault.py` from the kit:
+
+1. **Ask** in the interview: does the user already use Obsidian? Use it as canonical memory or create a dedicated vault?
+2. **Recommend a dedicated vault** (`AgentKnowledge/`) separate from the personal vault — isolation between bot knowledge and personal notes is the default.
+3. **Detect** existing vault (metadata only: path, structure — never read personal notes without `read_selected` consent).
+4. **Create** the structure with `setup-vault.py --path <vault> --hosts <hosts> --owner <user>` (idempotent; `--dry-run` first, apply after user approval).
+5. **Register** in checkpoint: `vault_path`, per-host inboxes, and per-bot folder scopes in `selected_items` (e.g. `vault:foca=read:canonical/services+templates`, `vault:infra=read:canonical/runbooks`).
+6. **Write policy**: bots write ONLY to `inbox/<host>/`; promotion to `canonical/` goes through the reconciler + human approval (see `references/canonical-knowledge.md`).
+
+VERIFY gains two checks: bot with authorized scope can read it; bot **cannot** read outside its scope (acceptance criteria #14/#15). The vault path is per-host — never assume the same path across machines.
+
 ## Checkpoint
 
 The checkpoint file (`checkpoint.json` in the workspace) is the source of truth for resumption. It must survive session interruption and allow continuing without the chat transcript.
@@ -121,3 +134,9 @@ Fields: `schema_version`, `kit_version`, `run_id`, `phase`, `host_id`, `profile_
 - `references/secrets-and-privileges.md` — secrets and sudo
 - `references/canonical-knowledge.md` — Obsidian vault topology
 - `references/resume-protocol.md` — checkpoint and resumption
+
+## Scripts
+
+- `scripts/setup-vault.py` — cria/verifica o vault canônico (idempotente; `--dry-run`, `--check`, proteção de caminho proibido)
+- `scripts/setup-linux-sandbox.sh` — sandbox Docker idempotente
+- `scripts/run-interview-test.py` — harness de entrevista automática
