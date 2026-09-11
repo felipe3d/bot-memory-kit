@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "kit_version": "0.1.0",
+  "run_id": "",
+  "phase": "INTENT",
+  "host_id": "",
+  "profile_id": "",
+  "workspace": "",
+  "session_id": "",
+  "approved_scope": null,
+  "selected_items": [],
+  "completed_steps": [],
+  "blocked_reason": null,
+  "next_step": "trigger",
+  "current_query": null,
+  "current_response": null,
+  "interview_answers": {},
+  "updated_at": ""
+}

@@ -1,0 +1,30 @@
+# Usuário fictício para testes do bot-memory-kit
+# Este é um perfil FICTÍCIO para testes automatizados. Nenhum dado real.
+
+persona:
+  name: "Felipe Teste"
+  role: "fotógrafo e administrador de sistemas"
+  business: "estúdio de fotografia e vídeo (Foca Foto e Vídeo)"
+  hobbies:
+    - fotografia
+    - tecnologia
+    - automação residencial
+  machines:
+    - "MacBook Pro (notebook do dia a dia)"
+    - "HomeLab Kubuntu (servidor local com RTX 3080)"
+    - "VPS Oracle ARM (24/7)"
+  time_sinks: "responder clientes, organizar arquivos de eventos, monitorar servidores"
+  wants_to_delegate: "atendimento de clientes, diagnóstico de infraestrutura, organização de documentos"
+  tools:
+    - Obsidian
+    - terminal
+    - Docker
+    - Cloudflare
+    - 1Password
+    - Apple Calendar
+  knowledge_sources: "Obsidian como fonte canônica; arquivos locais; e-mail; WhatsApp"
+  audience: "só eu (Felipe), mas atendimento pode chegar a clientes no futuro"
+  requires_approval: "qualquer alteração em produção, envio de mensagens a clientes, mudanças em DNS/infra"
+  cannot_leave_device: "fotos de clientes, credenciais, dados financeiros"
+  interaction_style: "falar diretamente com especialistas; atividades proativas apenas em horários definidos"
+  default_answer: "Depende, mas em geral prefiro manter controle manual sobre decisões importantes."
