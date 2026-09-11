@@ -25,6 +25,12 @@ Princípio central: **o kit é uma skill orquestradora + templates + scripts, co
 
 ### Aprovação e continuidade
 - Política de aprovação do perfil de destino: `memory.write_approval: true`, `skills.write_approval: true`, aprovação de comandos em modo `manual`; **negar** ações headless perigosas, sem YOLO/cron automático/publicação por padrão. Aplicar por perfil criado pelo kit, sem tocar no default ([Hermes memory/skills/security docs](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory)).
+- **Gate de modelo/fase:** antes de iniciar qualquer fase, o skill **lê o modelo ativo** e emite um aviso de capacidade conforme a fase. Modelo default de referência do kit: `ollama-cloud` + `glm-5.3` (também configurado como default no sandbox Linux por `scripts/setup-linux-sandbox.sh`). Mapa de adequação:
+  - **Entrevista / planejamento / diagnóstico**: adequado em qualquer modelo razoável; o Flash e o glm-5.3 atendem.
+  - **Curadoria item a item**: adequado com modelo de raciocínio razoável + aprovação humana obrigatória por item (o gate de aprovação é a barreira, não o modelo).
+  - **APPLY (mudanças aprovadas em perfis/cofres/sudo)**: exige modelo de maior confiança para aderência a instrução e tool-calling. Default recomendado `glm-5.3` (validado em produção/sandbox); alternativas por ranking: `nemotron-3-ultra`, `kimi-k3`, `qwen3.5:397b`. O skill **avisa** se o modelo ativo for Flash (ou outro de teto menor) antes de executar APPLY, e nunca aplica sem aprovação humana visível dos diffs.
+  - **Revisão independente do plano / passos críticos de segurança**: recomenda modelo mais forte (ex.: Opus ou DeepSeek Pro), fora do teto do Flash.
+  - Se o modelo do perfil ativo não estiver mapeado, o skill **pede confirmação** em vez de assumir adequação.
 - **Gatilho explícito:** `/bot-memory-kit` (iniciar/retomar/consultar). Menção casual a "memória" não inicia descoberta, leitura ou alteração. Iniciar o gatilho autoriza começar a **entrevista**, não instalar/migrar.
 - **Duas aprovações humanas separadas:** (1) escopo antes da descoberta; (2) plano antes do APPLY.
 - **Gateway (cron/VPS 24/7) só inicia com autorização separada** e credenciais/configuração locais. Não é efeito colateral de criar um perfil.
