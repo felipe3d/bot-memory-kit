@@ -41,7 +41,7 @@ PROVIDER=qwen MODEL=qwen3.5:397b ./scripts/setup-linux-sandbox.sh
 
 ## Provedor: nota importante
 
-O provider `ollama-cloud` usa base_url default **`https://ollama.com/v1`** (autentica com `OLLAMA_API_KEY`). **Não** confundir com o endpoint `homelab.fibradev.com/api/llm/dyn_bonsai` que aparece no config de produção — esse estava **fora do ar** (HTTP 502/403) na validação de 2026-09-11 e não deve ser usado como default do sandbox.
+O provider `ollama-cloud` usa base_url default **`https://ollama.com/v1`** (autentica com `OLLAMA_API_KEY`). Não aponte o sandbox para endpoints proxy self-hosted sem testar a conectividade antes: na validação de 2026-09-11, um endpoint proxy de produção estava fora do ar (HTTP 502/403) e confundiu o diagnóstico — o default nativo do `ollama-cloud` funcionou.
 
 ## Validações feitas (2026-09-11)
 

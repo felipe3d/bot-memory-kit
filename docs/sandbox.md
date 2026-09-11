@@ -20,7 +20,7 @@ Detalhes completos: **[docs/sandbox-linux.md](sandbox-linux.md)**.
 ## Mac sandbox (`HERMES_HOME` isolado)
 
 ```bash
-export HM=/Users/fac/dev/bot-memory-kit/test-homes/mac-sandbox
+export HM="$HOME/dev/bot-memory-kit/test-homes/mac-sandbox"
 HERMES_HOME=$HM hermes profile create <nome> --no-skills   # criação
 HERMES_HOME=$HM hermes -p <nome> skills list               # seleção
 HERMES_HOME=$HM hermes profile delete <nome>               # remoção
