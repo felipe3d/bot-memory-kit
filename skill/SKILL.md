@@ -90,6 +90,8 @@ Run the acceptance checklist from the plan on the real destination. Each test re
 
 The checkpoint file (`checkpoint.json` in the workspace) is the source of truth for resumption. It must survive session interruption and allow continuing without the chat transcript.
 
+**Path is MANDATORY: `<HERMES_HOME>/bmk-backups/checkpoint.json`** (resolved from the `HERMES_HOME` env var at run time). The skill directory and container-ephemeral paths (`/opt/data`, `/tmp`) are FORBIDDEN — they vanish between runs and the checkpoint is then lost (observed in sandbox test 2026-09-11: durable backup stayed empty because the skill wrote to `/opt/data`). Every checkpoint write goes to this path; the durable copy is written on every phase transition, not only at the end.
+
 Fields: `schema_version`, `kit_version`, `run_id`, `phase`, `host_id`, `profile_id`, `workspace`, `session_id`, `approved_scope`, `selected_items`, `completed_steps`, `blocked_reason`, `next_step`, `current_query`, `current_response`, `interview_answers`, `updated_at`.
 
 ## References

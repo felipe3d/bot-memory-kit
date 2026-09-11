@@ -44,9 +44,11 @@ Máquina de estados: `INTENT → INTERVIEW → SCOPE_APPROVED → CONSENT_PER_HO
 ## Regras de persistência
 
 1. **Toda transição é persistida atomicamente** (write temp + rename) — intenção antes da ação, resultado verificado depois.
-2. Cada resposta de entrevista → checkpoint imediato (round a round).
-3. Backup durável em `<home>/bmk-backups/checkpoint.json` a cada fase (proteção contra falha do arquivo primário).
+2. **Caminho obrigatório do checkpoint: `<HERMES_HOME>/bmk-backups/checkpoint.json`** (resolvido do env `HERMES_HOME` em runtime). Proibido gravar no diretório da skill ou em caminhos efêmeros do container (`/opt/data`, `/tmp`) — somem entre execuções e o checkpoint se perde (achado real do sandbox, 2026-09-11). Cada write do checkpoint vai para este caminho, em **toda** transição de fase — não só no fim.
+3. Cada resposta de entrevista → checkpoint imediato (round a round).
 4. **Nunca** no checkpoint: segredos, tokens, dados brutos, URLs autenticadas, conteúdo de conversa além das respostas.
+
+Na retomada, se o checkpoint primário estiver ausente mas `bmk-backups/` tiver cópia, restaurar do backup e registrar `restored_from_backup` em `completed_steps`.
 
 ## Retomada: procedimento
 
