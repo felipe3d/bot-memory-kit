@@ -1,5 +1,31 @@
 # Interview Guide
 
+## Warm-start: revisão de memória durante a entrevista
+
+Quando o perfil atual **já tem memória** (USER.md/MEMORY.md injetados no system prompt) e/ou acesso autorizado ao vault, a entrevista **não recomeça do zero** — ela confirma e corrige:
+
+1. **Cartão de confirmação antes do Bloco 1**: "Isto é o que já sei sobre você: [lista de fatos com origem e data]. Confirme ou corrija o que estiver errado."
+2. **Perguntas viram confirmações**: "Você é o Felipe, fotógrafo, e a Foca é sua empresa? Corrija qualquer detalhe." — sempre com **opção explícita de correção**, nunca pergunta sim/não que force o "sim".
+3. **Perguntas abertas somente para lacunas** — o que não está em memória.
+
+### Ledger de fatos (cada resposta tem um destino)
+
+| Resultado da confirmação | Registro no checkpoint (`known_facts`/`corrections`) |
+|---|---|
+| **Confirmado** | valor mantido; `verified_at` atualizado |
+| **Corrigido** | valor novo entra; valor antigo → `superseded` (nunca apagado) |
+| **Obsoleto** | não é mais verdade → arquivado com referência cruzada |
+| **Lacuna** | resposta vira fato novo com `source: entrevista <data>` |
+
+Correções de canon (USER.md original, vault) entram como **propostas** (`corrections[]` no checkpoint → inbox do vault), aplicadas com aprovação — a entrevista **não** edita a memória do perfil original sozinha.
+
+### Guardrails
+
+- **Fatos de identidade/contexto** (quem, o quê, onde, ferramentas) podem ser confirmados de memória.
+- **Blocos 4 e 5** (privacidade, aprovação, autonomia, tolerância a custo) **não são confirmados de memória** — perguntas sempre abertas: eles definem os limites dos **novos** bots; assumir limites herdados do sistema antigo é perigoso.
+- Nunca citar segredos no cartão de confirmação (nem valores, nem "você tem a chave X?" — só o catálogo, sem valores).
+- Fato confirmado registra `source` e `verified_at` — "estava na memória" não é verdade, é hipótese até o usuário ratificar.
+
 ## Block 1: Life and responsibilities
 
 1. "Como você dividiria sua vida hoje em grandes áreas de responsabilidade e interesse?"
@@ -40,3 +66,4 @@
 - If resuming, skip already-answered questions.
 - Adapt follow-ups based on previous answers.
 - Never ask for passwords, API keys, or credentials — those are configured separately.
+- **Warm-start**: use existing memory/vault as confirmable hypothesis (cartão de confirmação), never as assumed truth — see Warm-start section above. Blocks 4–5 are always open questions.

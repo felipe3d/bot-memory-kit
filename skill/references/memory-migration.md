@@ -15,6 +15,19 @@ Como auditar a memória existente e migrar fatos aprovados para os novos bots.
 BACKUP → INVENTÁRIO → CLASSIFICAÇÃO → APROVAÇÃO → MIGRAÇÃO → TESTE
 ```
 
+### Atalho: fatos já confirmados na entrevista (warm-start)
+
+Se a entrevista rodou com **warm-start** (cartão de confirmação — ver `templates/interview.md`), os fatos chegam à migração **pré-classificados**:
+
+| Registro no checkpoint | Classificação herdada |
+|---|---|
+| `known_facts[x].status=confirmed` | aprovado para migração (origem + `verified_at` já registrados) |
+| `known_facts[x].status=superseded` | não migra o valor antigo; migra o novo |
+| `corrections[y]` | proposta para o canon (inbox do vault) — aprovação separada |
+| lacuna preenchida | fato novo, `source: entrevista` |
+
+Nesse caminho, a fase de classificação só precisa julgar o que **não** apareceu na entrevista. A revisão de memória e a entrevista são o mesmo gesto: **o usuário corrige a memória enquanto responde**, em vez de revisar uma tabela seca depois.
+
 ### 1. Backup (antes de qualquer coisa)
 
 ```bash
