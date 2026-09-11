@@ -1,7 +1,7 @@
 ---
 name: bot-memory-kit
 description: "Use when the user explicitly asks to set up bots and memory with the Bot Memory Kit. Conducts an interview, plans bot architecture, and deploys with approval gates. Does NOT trigger on casual mentions of memory or bots."
-version: 0.1.0
+version: 1.0.0
 author: fac
 license: MIT
 metadata:

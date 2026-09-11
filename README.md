@@ -99,6 +99,10 @@ bmk-backups/
 
 Limitações conhecidas (MVP): T12 (sudo) e T13 (broker) parciais no container; o teste real desses é no host-alvo. Segredos de produção (1Password SA, broker em conta separada) são documentados em `references/secrets-and-privileges.md` mas não exercitados no sandbox.
 
+## Changelog
+
+Veja [CHANGELOG.md](CHANGELOG.md).
+
 ## Licença
 
 MIT — veja [LICENSE](LICENSE).
