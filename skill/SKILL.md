@@ -68,6 +68,24 @@ Before any phase that modifies the environment (APPLY), check the active model:
 - Recommend alternatives (see `references/selection-and-safety.md`).
 - Never proceed to APPLY without explicit human approval of the diffs.
 
+### Phase: APPLY (after explicit "aprovo")
+
+Apply the approved items from `selected_items`, step by step:
+
+1. **Lock**: create `bmk.lock` in the workspace (refuse if another run is active).
+2. **Backup**: copy destination state (`memories/`, configs) before touching anything; record backup path in checkpoint.
+3. **Create profiles**: `hermes profile create <name> --no-skills` — **the `--no-skills` flag is MANDATORY on every profile the kit creates** (positive selection only; creating without it seeds the full bundled catalog, which violates acceptance criterion #4). Never use `--clone`/`--clone-all`. Install each approved skill individually afterwards.
+4. **Idempotency check per step**: before each action, verify the destination already exists. If it does, record the step as done and continue — never blindly re-create.
+5. **Write atomically**: persist intent to checkpoint BEFORE the action; record verified result AFTER.
+6. **Inventory comparison**: after all steps, compare final inventory against `selected_items`. Divergence = verification failure.
+7. **No secrets**: creation steps never carry credential values.
+
+Then VERIFY: run the acceptance tests (see `templates/acceptance-tests.md`). Only after verification report the bot as ready.
+
+### Phase: VERIFY
+
+Run the acceptance checklist from the plan on the real destination. Each test result goes to `verification_results` in the checkpoint. Any failure → `BLOCKED` with the reason. Success requires all tests passing on the **actual** destination/surface — a plausible output is not a test.
+
 ## Checkpoint
 
 The checkpoint file (`checkpoint.json` in the workspace) is the source of truth for resumption. It must survive session interruption and allow continuing without the chat transcript.

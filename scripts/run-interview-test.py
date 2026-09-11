@@ -220,12 +220,39 @@ def main():
         if not st["session_id"] or not st.get("last_question"):
             msg = "iniciar bot-memory-kit"
         else:
-            ans = persona_answer(st["last_question"], persona, used_keys)
-            st["qa"][f"q{len(st['qa']) + 1}"] = {
-                "question": st["last_question"], "answer": ans}
-            print(f"\n[round {st['round']}] Q: {st['last_question'][:110]}")
-            print(f"[round {st['round']}] A: {ans[:160]}")
-            msg = ans
+            last = st["last_question"].lower()
+            # Gates de aprovação — o persona aprova quando o escopo é coerente
+            if ("aprova" in last or "aprovar" in last or last.startswith("aprova")) and "escopo" in last or "aprova" in last[:12]:
+                ans = "Aprovo, com a condição já dita: toda alteração em produção, mensagem a cliente ou mudança de DNS/infra depende da minha aprovação explícita. Pode seguir."
+                st["qa"][f"q{len(st['qa']) + 1}"] = {"question": st["last_question"], "answer": ans}
+                print(f"\n[round {st['round']}] GATE: {st['last_question'][:90]}")
+                print(f"[round {st['round']}] A: {ans[:140]}")
+                msg = ans
+            elif ("pode seguir" in last or "posso seguir" in last or "consentimento" in last) and "inspecionar" not in last:
+                ans = "Pode seguir."
+                st["qa"][f"q{len(st['qa']) + 1}"] = {"question": st["last_question"], "answer": ans}
+                print(f"\n[round {st['round']}] GATE: {st['last_question'][:90]}")
+                print(f"[round {st['round']}] A: {ans}")
+                msg = ans
+            elif "inspecionar" in last or ("descoberta" in last and "host" in last):
+                ans = "Pode inspecionar, somente leitura, só metadados."
+                st["qa"][f"q{len(st['qa']) + 1}"] = {"question": st["last_question"], "answer": ans}
+                print(f"\n[round {st['round']}] GATE: {st['last_question'][:90]}")
+                print(f"[round {st['round']}] A: {ans}")
+                msg = ans
+            elif "?" not in last and ("aplicar" in last or "criar" in last or "aprovo" in last):
+                ans = "Aprovo. Pode aplicar os itens aprovados."
+                st["qa"][f"q{len(st['qa']) + 1}"] = {"question": st["last_question"], "answer": ans}
+                print(f"\n[round {st['round']}] GATE: {st['last_question'][:90]}")
+                print(f"[round {st['round']}] A: {ans}")
+                msg = ans
+            else:
+                ans = persona_answer(st["last_question"], persona, used_keys)
+                st["qa"][f"q{len(st['qa']) + 1}"] = {
+                    "question": st["last_question"], "answer": ans}
+                print(f"\n[round {st['round']}] Q: {st['last_question'][:110]}")
+                print(f"[round {st['round']}] A: {ans[:160]}")
+                msg = ans
 
         new_sid, resp, err = run_round(hm, st["session_id"], msg, key)
         if err:
