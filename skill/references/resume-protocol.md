@@ -50,6 +50,19 @@ Máquina de estados: `INTENT → INTERVIEW → SCOPE_APPROVED → CONSENT_PER_HO
 
 Na retomada, se o checkpoint primário estiver ausente mas `bmk-backups/` tiver cópia, restaurar do backup e registrar `restored_from_backup` em `completed_steps`.
 
+## Durable artifacts (mesma raiz do checkpoint)
+
+Todos os artefatos duráveis do kit compartilham a raiz obrigatória `<HERMES_HOME>/bmk-backups/`:
+
+| Artefato | Caminho |
+|---|---|
+| Checkpoint | `bmk-backups/checkpoint.json` |
+| **Plano aprovado** | `bmk-backups/PLAN.md` (gravado em PLAN_READY e após cada aprovação que o muda) |
+| Backup pós-APPLY | `bmk-backups/<label>/` |
+| Quarentena | `bmk-backups/quarantine-<name>` |
+
+Gravar plano/backup em caminho efêmero (`/opt/data`, `/tmp`) = artefato perdido na próxima execução (achado real de 2026-09-11: o PLAN.md aprovado se perdeu; só a evidência textual dentro do checkpoint sobreviveu).
+
 ## Retomada: procedimento
 
 ```

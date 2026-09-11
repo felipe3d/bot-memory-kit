@@ -86,6 +86,19 @@ Then VERIFY: run the acceptance tests (see `templates/acceptance-tests.md`). Onl
 
 Run the acceptance checklist from the plan on the real destination. Each test result goes to `verification_results` in the checkpoint. Any failure → `BLOCKED` with the reason. Success requires all tests passing on the **actual** destination/surface — a plausible output is not a test.
 
+## Durable artifacts path (T2 residual fix)
+
+All durable kit artifacts share one mandatory location — **`<HERMES_HOME>/bmk-backups/`**, resolved from the `HERMES_HOME` env var at run time:
+
+| Artifact | Path |
+|---|---|
+| Checkpoint | `<HERMES_HOME>/bmk-backups/checkpoint.json` |
+| **Approved plan** | `<HERMES_HOME>/bmk-backups/PLAN.md` |
+| Post-apply backup | `<HERMES_HOME>/bmk-backups/<label>/` |
+| Quarantine | `<HERMES_HOME>/bmk-backups/quarantine-<name>` |
+
+FORBIDDEN: the skill directory and container-ephemeral paths (`/opt/data`, `/tmp`) — they vanish between runs and the artifact is lost (observed 2026-09-11: the approved PLAN.md written to `/opt/data/bmk-workspace/` was destroyed when the container ephemeral layer reset; only the textual evidence inside the checkpoint survived). Write the plan to the durable path at PLAN_READY, and again after every approval that changes it.
+
 ## Checkpoint
 
 The checkpoint file (`checkpoint.json` in the workspace) is the source of truth for resumption. It must survive session interruption and allow continuing without the chat transcript.
