@@ -2,7 +2,9 @@
 
 Kit replicável para descobrir necessidades, planejar e implantar bots e memória no Hermes Agent — via entrevista guiada, gates de aprovação e verificação de aceitação.
 
-**Status: ciclo completo validado end-to-end em sandbox** (entrevista 18 perguntas → gates de aprovação → APPLY idempotente → VERIFY 16/16 → COMPLETE). Ainda não testado em host real de produção.
+**Status do kit:** ciclo completo validado end-to-end em sandbox (entrevista 18 perguntas → gates de aprovação → APPLY idempotente → VERIFY 16/16 → COMPLETE). O kit também subsidiou pilotos reais GTD/CRM, documentados fora do repositório com evidências próprias.
+
+**Estado do programa:** o plano de controle atual está em [`program/`](program/README.md). Comece por [`program/CURRENT.md`](program/CURRENT.md), não por transcrições antigas nem pelo status histórico deste README.
 
 ## O que é
 

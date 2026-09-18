@@ -1,6 +1,8 @@
 # Plano de Implementação — bot-memory-kit (revisado v2)
 
-Data: 2026-09-10 · Fase: WAITING_IMPLEMENTATION_APPROVAL
+Data: 2026-09-10 · **Status histórico do kit v2:** WAITING_IMPLEMENTATION_APPROVAL
+
+> O estado atual do programa não é mantido neste documento. Leia `program/CURRENT.md`, `program/ROADMAP.md` e o work package ativo. Este plano preserva a arquitetura original do kit e não autoriza mudanças no ambiente por si só.
 Base: `hermes-research.md` + `memory-secrets-research.md`. Fontes citadas nestes relatórios apontam para páginas oficiais (Hermes docs, 1Password dev, Obsidian, Apple); nas seções de segurança, links diretos são indicados quando relevantes.
 Revisto por: subagente independente (2026-09-10) — correções C1/C2/A1-A3/M1-M5/B1-B3 aplicadas nesta v2.
 
