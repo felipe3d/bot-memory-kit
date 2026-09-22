@@ -1,8 +1,9 @@
 # WP-010 — Contrato de memória
 
-**Estado:** PLANNED  
+**Estado:** VERIFIED — aprovado em 2026-09-18
 **Tipo:** planejamento  
 **Change set:** nenhum
+**Entregável:** `program/contracts/MEMORY-CONTRACT.md` (contrato v0.1 aprovado)
 
 ## Resultado esperado
 
@@ -18,10 +19,10 @@ Criar reconciliador, alterar vault, migrar notas, configurar Headless ou modific
 
 ## Tarefas
 
-- [ ] Definir entidades, campos mínimos, níveis de sensibilidade e ACL.
-- [ ] Definir transições de lifecycle e responsável por cada uma.
-- [ ] Definir recuperação citada e comportamento na ausência/conflito de fontes.
-- [ ] Especificar testes negativos para candidatos, supersessão e prompt injection.
+- [x] Definir entidades, campos mínimos, níveis de sensibilidade e ACL.
+- [x] Definir transições de lifecycle e responsável por cada uma.
+- [x] Definir recuperação citada e comportamento na ausência/conflito de fontes.
+- [x] Especificar testes negativos para candidatos, supersessão e prompt injection.
 
 ## Gate
 

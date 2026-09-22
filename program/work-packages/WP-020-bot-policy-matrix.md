@@ -1,8 +1,9 @@
 # WP-020 — Matriz de bots e permissões
 
-**Estado:** PLANNED  
-**Tipo:** planejamento  
+**Estado:** VERIFIED — matriz v0.1 aprovada explicitamente em 2026-09-18
+**Tipo:** planejamento
 **Change set:** nenhum
+**Entregável:** `program/contracts/BOT-POLICY-MATRIX.md` (matriz v0.1 aprovada)
 
 ## Resultado esperado
 
@@ -18,11 +19,17 @@ Criar perfis, adicionar MCPs, mudar grants Telegram ou configurar credenciais.
 
 ## Tarefas
 
-- [ ] Mapear cada papel e seu backend autoritativo.
-- [ ] Separar capacidades pessoais, compartilhadas, administrativas e de projeção.
-- [ ] Definir ações destrutivas e gates estruturais.
-- [ ] Definir critérios mínimos para introduzir um novo domínio.
+- [x] Mapear cada papel e seu backend autoritativo.
+- [x] Separar capacidades pessoais, compartilhadas, administrativas e de projeção.
+- [x] Definir ações destrutivas e gates estruturais.
+- [x] Definir critérios mínimos para introduzir um novo domínio.
+
+## Critérios de aceite
+
+- [x] A proposta cobre os seis papéis e os oito eixos requeridos.
+- [x] Autoridades, ACL fail-closed, credenciais separadas e kill switches independentes estão definidos.
+- [x] Nenhum perfil, MCP, credencial, grant Telegram ou infraestrutura foi criado/alterado.
 
 ## Gate
 
-Aprovação explícita da matriz antes de qualquer novo perfil ou credencial.
+A matriz em `program/contracts/BOT-POLICY-MATRIX.md` foi aprovada explicitamente. Qualquer perfil, MCP, credencial, grant Telegram ou infraestrutura continua exigindo change set aprovado separado.

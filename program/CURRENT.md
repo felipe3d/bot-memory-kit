@@ -1,37 +1,45 @@
 # Estado atual do programa
 
-**Atualizado:** 2026-09-17  
-**WP ativo:** WP-010 — contrato de memória (`PLANNED`)  
-**Próximo passo único:** abrir uma sessão nova exclusivamente para detalhar o WP-010; nenhuma implementação fora do repositório está autorizada.
+**Atualizado:** 2026-09-21
+**WP ativo:** WP-033 — curadoria assistida de conhecimento (`VERIFIED`)
+**Próximo passo único:** nenhum gate pendente. O piloto pessoal local está funcional com uma nota canônica vigente. O proprietário decide se amplia fontes, adiciona domínios ou mantém como está.
 
 ## Objetivo
 
-Construir um ecossistema de bots com memória útil, revisável e isolada, preservando autoridades: Obsidian para conhecimento, Mindwtr para GTD e Odoo para CRM.
+Bots pessoais especializados, com memória útil, recuperável e corrigível. Especialização não é proibição de consultar contexto autorizado de outra área. Obsidian permanece autoridade de conhecimento; Mindwtr de tarefas; Odoo de CRM. Consultar não concede escrita, envio, exclusão nem persistência de cópias.
 
-## Fatos verificados relevantes
+Uso pessoal e exposição a terceiros são casos diferentes; hospedagem na VPS não torna um bot compartilhado. Isolamento rigoroso é requisito para dados/capacidades expostos a outras pessoas, sem dispensar proteção de credenciais e controles de ações de impacto nos bots pessoais.
 
-- P0, P1-A e P1-A2 foram concluídos; o piloto do gateway usa release dedicado 0.21.3 e deve permanecer preservado.
-- GTD e CRM são perfis/pilotos reais; suas operações e dados não fazem parte deste WP.
-- Telegram dos especialistas está contido por allowlists; GTD e CRM usam somente MCPs permitidos no canal.
-- AgentKnowledge existe como conhecimento estruturado; a arquitetura de acesso 24/7 com menor privilégio ainda não foi selecionada/aplicada.
+## Estado documental, prova disponível e verificação atual
 
-## Pendências do programa
+| Assunto | O que os documentos registram | Limite nesta revisão |
+|---|---|---|
+| P0, P1-A, P1-A2, GTD, CRM e gateway dedicado 0.21.3 | Pilotos existentes e preservados; allowlists e MCPs limitados por canal | Não consultamos hosts, perfis ou integrações; não certificamos seu estado atual |
+| Contrato de memória e matriz | Aprovação histórica v0.1; direção pessoal incorporada na revisão v0.2 | Política não prova implementação nem todos os testes de segurança |
+| Publicação P-0 | `evidence/CS-032-p0-run.md` relata teste com fixture, revogação e limpeza integral, inclusive repo | Cabeçalho histórico ainda diz BLOCKED; seção final relata limpeza. Não reescrevemos a evidência nem a revalidamos remotamente; não há pipeline real permanente comprovada |
+| AgentKnowledge | Descoberta anterior relatou canonical vazio | Nesta execução, somente o destino CS-034 foi verificado: uma candidata no inbox, destino canônico próprio vazio; nenhuma varredura do restante do vault |
+| CS-033 / publicação VPS | Publicação real segue bloqueada conforme registro anterior; opção adiada | Não é pré-requisito universal do primeiro aprendizado; nenhuma publicação real autorizada aqui |
+| CS-034 | Execução verificada: helper e skill locais, 23 testes automáticos, aprovação/correção/retirada humanas reais, 3 conversas novas no Desktop com recuperação citada e uso correto | Uma nota canônica vigente (rev. 2, 120 dias). Ver `evidence/CS-034-local-learning-run.md` |
 
-- Contrato completo de lifecycle, proveniência, ACL e expiração da memória.
-- Matriz integral de bots, audiências, dados, grants e kill switches.
-- Decisão e prova de isolamento para AgentKnowledge/VPS.
-- Testes de recuperação citada, isolamento entre perfis e prompt injection em notas.
-- Seleção do primeiro domínio novo após a fundação.
+## Primeiro resultado útil
 
-## Guardrails
+A IA lê apenas a seção “Acordo com o usuário” do handoff autorizado, sugere até três preferências de colaboração, mostra origem e validade ao proprietário e registra somente o que ele aprovar. Uma conversa nova deve recuperar a nota vigente com citação. Ajuste e retirada também serão testados. A fonte é concreta e já conhecida; nenhum inventário privado é necessário para escolhê-la.
 
-- Não sincronizar state.db, homes Hermes ou credenciais.
-- Não expor o vault pessoal inteiro a Headless nem confiar em selective sync como fronteira.
-- Não alterar gateway, release, unit, backups, perfis, credenciais, vaults ou rotas Telegram sem change set aprovado.
-- Não tratar transcript como fonte de verdade operacional.
+## Limites preservados
+
+- Não alterar pilotos GTD/CRM, gateway, integrações, permissões existentes, backups ou rotas.
+- Não sincronizar state.db, homes Hermes ou credenciais; não conceder acesso ao vault inteiro nem tratar sync como ACL.
+- Revisão documental anterior concluída. A aprovação posterior cobre somente os arquivos/destinos locais enumerados em CS-034; sem novos acessos, publicação VPS, commit ou push.
+- Uma aprovação da entrega cobre implementação, testes, retries seguros e rollback enumerados. Revisão de cada candidata é decisão de conteúdo, não nova aprovação de infraestrutura.
+- Parar por acesso/privilégio novo, decisão material, risco inesperado ou falha sem recuperação segura. Não criar novos gates para detalhar trabalho já autorizado.
+- Gates e cabeçalhos de ensaios anteriores são históricos e específicos daqueles ensaios, não próximos passos automáticos do WP ativo.
 
 ## Leitura seguinte
 
-1. `work-packages/WP-000-control-plane.md`
+1. `work-packages/WP-033-assisted-candidate-curation.md`
 2. `DECISIONS.md`
-3. `EVIDENCE.md`
+3. `change-sets/CS-034-assisted-candidate-curation.md`
+4. `handoffs/CS-034.md`
+5. `contracts/MEMORY-CONTRACT.md` e `contracts/BOT-POLICY-MATRIX.md`
+
+`PLAN.md` é histórico; `ROADMAP.md` orienta a sequência atual. `EVIDENCE.md` agora aponta também à prova operacional local CS-034, sem reescrever evidências históricas.
