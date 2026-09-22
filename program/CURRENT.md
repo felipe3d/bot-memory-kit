@@ -1,8 +1,8 @@
 # Estado atual do programa
 
 **Atualizado:** 2026-09-21
-**WP ativo:** WP-033 — curadoria assistida de conhecimento (`VERIFIED`)
-**Próximo passo único:** nenhum gate pendente. O piloto pessoal local está funcional com uma nota canônica vigente. O proprietário decide se amplia fontes, adiciona domínios ou mantém como está.
+**WP ativo:** WP-033 — curadoria assistida de conhecimento (`VERIFIED`); CS-035 publicação VPS (`VERIFIED`)
+**Próximo passo único:** nenhum gate pendente. Piloto pessoal local funcional com nota canônica vigente. AgentKnowledge sincronizado Mac→VPS via Git bare. O proprietário decide se amplia fontes, adiciona domínios ou mantém como está.
 
 ## Objetivo
 
@@ -18,8 +18,9 @@ Uso pessoal e exposição a terceiros são casos diferentes; hospedagem na VPS n
 | Contrato de memória e matriz | Aprovação histórica v0.1; direção pessoal incorporada na revisão v0.2 | Política não prova implementação nem todos os testes de segurança |
 | Publicação P-0 | `evidence/CS-032-p0-run.md` relata teste com fixture, revogação e limpeza integral, inclusive repo | Cabeçalho histórico ainda diz BLOCKED; seção final relata limpeza. Não reescrevemos a evidência nem a revalidamos remotamente; não há pipeline real permanente comprovada |
 | AgentKnowledge | Descoberta anterior relatou canonical vazio | Nesta execução, somente o destino CS-034 foi verificado: uma candidata no inbox, destino canônico próprio vazio; nenhuma varredura do restante do vault |
-| CS-033 / publicação VPS | Publicação real segue bloqueada conforme registro anterior; opção adiada | Não é pré-requisito universal do primeiro aprendizado; nenhuma publicação real autorizada aqui |
+| CS-033 / publicação VPS | CS-035 executou publicação real: Git bare na VPS, clone read-only, skill instalada | O Hermes da VPS é pessoal do proprietário; sem cron de sync automático; pull manual |
 | CS-034 | Execução verificada: helper e skill locais, 23 testes automáticos, aprovação/correção/retirada humanas reais, 3 conversas novas no Desktop com recuperação citada e uso correto | Uma nota canônica vigente (rev. 2, 120 dias). Ver `evidence/CS-034-local-learning-run.md` |
+| CS-035 | Publicação VPS verificada: push Mac→VPS, clone read-only, skill personal-learning, nota canônica acessível na VPS | Sem cron; pull manual. Ver `evidence/CS-035-vps-publication.md` |
 
 ## Primeiro resultado útil
 

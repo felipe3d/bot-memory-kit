@@ -15,5 +15,6 @@
 | E-011 | verificado em preflight Gate P | HomeLab negou `sudo -n`; VPS aceitou, mas nenhuma mutação iniciou sem o publicador isolado | `program/evidence/CS-030-gate-p-preflight.md` |
 | E-012 | verificado em piloto Gate P VPS-only | Publicação/validação sintética, key revocation, limpeza VPS e ausência posterior do repositório passaram; não certifica N-01/N-02 reais | `program/evidence/CS-030-gate-p-vps-only-run.md` |
 | E-013 | verificado | CS-034: preflight, helper/skill locais, 23 testes automáticos, aprovação/rejeição/correção/retirada humanas reais, 3 conversas novas no Desktop com recuperação citada e uso correto | `program/evidence/CS-034-local-learning-run.md` |
+| E-014 | verificado | CS-035: AgentKnowledge sincronizado Mac→VPS via Git bare; VPS faz pull read-only; skill personal-learning instalada no default da VPS | `program/evidence/CS-035-vps-publication.md` |
 
 Não incluir segredos, dumps de configurações, state.db, conteúdo pessoal ou dados de clientes neste índice.
