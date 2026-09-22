@@ -1,7 +1,15 @@
-"""Local-only synthetic projection used by CS-030 Phase 1 tests.
+"""CS-030 — Spike sintético de projeção/publicação (Phase 1).
 
-This module accepts fixture records only. It has no filesystem discovery,
-networking, vault integration, secret store, or production identity support.
+Módulo local-only que aceita somente fixtures sintéticas. Não tem descoberta de
+filesystem, rede, integração de vault, secret store nem identidade de produção.
+
+Usado pelos testes em tests/test_cs030_synthetic_spike.py para validar:
+- Filtro positivo (somente registros allowlisted/scope)
+- Negação de identidade sintética desconhecida
+- Write-deny (reader não pode escrever/mutar a publicação)
+- Revogação fail-closed sem mutar registros publicados
+- Integridade (publicação adulterada falha)
+- Projeção somente de canônicos vigentes no scope permitido
 """
 
 from __future__ import annotations

@@ -1,8 +1,39 @@
 #!/usr/bin/env python3
-"""Bounded local personal-learning pilot. No network, no shell, no model calls.
+"""CS-034 — Helper local de aprendizado assistido (piloto pessoal do Mac).
 
-This component validates operations, not the honesty of its trusted Desktop
-operator. It is NOT a security boundary around a broadly privileged agent.
+Componente stdlib-only (sem rede, shell, subprocess externo ou chamadas de modelo).
+O assistente de IA desta conversa redige candidatas a partir da fonte autorizada;
+este helper valida, persiste e recupera — não simula um LLM.
+
+Fluxo:
+    fonte allowlisted → propose() cria candidata em inbox
+    → cartão sanitizado para revisão humana
+    → decide(approve) promote para canonical / decide(reject) descarta
+    → revise() cria nova revisão candidata (correção)
+    → decide(withdraw) arquiva e bloqueia recuperação
+    → retrieve() retorna somente canônicos vigentes com citação
+    → recover() restaura transação incompleta
+    → rollback() desabilita o piloto e arquiva tudo
+
+Segurança:
+    - Valida origem/binding da decisão, não autentica criptograficamente o operador.
+    - O operador Desktop é parte confiável neste piloto.
+    - NÃO é fronteira de segurança contra agente com ferramentas amplas.
+    - Filtro de conteúdo é heurístico/conservador, não detector universal.
+
+Paths:
+    Fonte:  /Users/fac/dev/bot-memory-kit/program/handoffs/SESSION-PROMPT-PERSONAL-BOTS.md
+    Vault:  /Users/fac/dev/Obsidian/felipe/AgentKnowledge/
+    Backup: /Users/fac/.hermes/bmk-backups/cs034-personal-learning/
+
+Uso (CLI):
+    python3 -B scripts/cs034_personal_learning.py cards
+    python3 -B scripts/cs034_personal_learning.py retrieve
+    echo '{"statement":"...","utility":"...","valid_days":90}' | python3 -B scripts/cs034_personal_learning.py propose
+    echo '{"actor":"owner","channel":"desktop-private",...}' | python3 -B scripts/cs034_personal_learning.py decide
+    echo '{"id":"AK-...","draft":{...},"reference":"desktop:..."}' | python3 -B scripts/cs034_personal_learning.py revise
+    python3 -B scripts/cs034_personal_learning.py recover
+    python3 -B scripts/cs034_personal_learning.py rollback
 """
 import hashlib
 import os
@@ -11,14 +42,16 @@ import stat
 
 
 class Refused(Exception):
-    """Fail closed; messages must never contain untrusted input."""
+    """Operação negada (fail closed). Mensagens nunca contêm input não confiável."""
 
 
 def digest(data):
+    """SHA-256 hex de bytes ou string."""
     return hashlib.sha256(data if isinstance(data, bytes) else data.encode()).hexdigest()
 
 
 def safe_path(path):
+    """Valida path absoluto sem '..' e sem symlinks em qualquer componente."""
     path = Path(path)
     if not path.is_absolute() or '..' in path.parts:
         raise Refused('invalid_path')
@@ -29,6 +62,7 @@ def safe_path(path):
 
 
 def read_bytes(path, limit):
+    """Lê até `limit` bytes de arquivo regular (não symlink, link único). Refused se exceder."""
     path = safe_path(path)
     fd = os.open(str(path), os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     with os.fdopen(fd, 'rb') as stream:
@@ -42,6 +76,7 @@ def read_bytes(path, limit):
 
 
 def read_source(path, allowed, expected_digest):
+    """Lê somente a seção 'Acordo com o usuário' de `path`, se for igual a `allowed` e o digest bater."""
     path, allowed = safe_path(path), safe_path(allowed)
     if path != allowed:
         raise Refused('source_not_allowed')
@@ -125,6 +160,11 @@ def note_read(path, expected):
 
 
 def validate_draft(draft):
+    """Valida schema e conteúdo de um draft de candidata (statement, utility, valid_days).
+
+    Rejeita segredos, emails, URLs, paths, instruções, dados operacionais e payloads grandes.
+    Filtro conservador/heurístico — não é detector universal de PII ou injeção.
+    """
     if not isinstance(draft, dict) or set(draft) != {'statement', 'utility', 'valid_days'}:
         raise Refused('draft_schema')
     days = draft['valid_days']
@@ -144,7 +184,13 @@ def validate_draft(draft):
 
 
 class Store:
-    """Owned subdirectories only. Desktop operator is part of the trust boundary."""
+    """Store do piloto CS-034: inbox, canonical e archive em subdiretórios próprios.
+
+    Operações: propose, cards, decide, revise, retrieve, recover, rollback.
+    Transações atômicas com journal pré-imagem para recuperação.
+    Lock por flock no backup. State em JSON validado a cada operação.
+    O operador Desktop é parte confiável; isto não é fronteira de SO.
+    """
     def __init__(self, root, backup, source, source_digest):
         self.root, self.backup = safe_path(root), safe_path(backup)
         self.source, self.source_digest = safe_path(source), source_digest
@@ -249,6 +295,7 @@ class Store:
             return {'status': 'recovered'}
 
     def propose(self, draft):
+        """Cria candidata em inbox a partir do draft e da fonte autorizada. Idempotente por fingerprint."""
         validate_draft(draft)
         source = read_source(self.source, self.source, self.source_digest)
         fingerprint = digest(encoded(draft))
@@ -276,14 +323,16 @@ class Store:
             return note
 
     def cards(self):
+        """Lista candidatas pendentes (status=candidate) para revisão humana."""
         with self.locked():
             state = self.state()
             return [note_read(self.inbox / (identity + '.md'), item['digest'])
                     for identity, item in state['entries'].items() if item['status'] == 'candidate']
 
     def decide(self, decision):
-        """Trusted adapter submits an ACTUAL owner's turn, never model/source approval.
+        """Aplica decisão humana (approve/reject/withdraw) vinculada a ID, revisão e digest.
 
+        Trusted adapter submits an ACTUAL owner's turn, never model/source approval.
         Binding and shape are validated here. This method cannot authenticate a
         human against a malicious operator with the same OS/file permissions.
         """
@@ -344,6 +393,11 @@ class Store:
             return result
 
     def revise(self, identity, draft, reference):
+        """Cria nova revisão candidata a partir de uma nota existente (correção).
+
+        A versão anterior é arquivada como superseded; a nova fica candidate
+        e exige nova decisão humana. Withdrawn não é revisável.
+        """
         validate_draft(draft)
         if not re.fullmatch(r'desktop:[A-Za-z0-9_.:-]{1,160}', reference):
             raise Refused('decision_origin')
@@ -378,6 +432,10 @@ class Store:
             return note
 
     def rollback(self):
+        """Desabilita o piloto: arquiva canônicos, rejeita candidatas, cria marca DISABLED.
+
+        Tombstones de retirada permanecem. Auditoria não é apagada.
+        """
         with self.locked(allow_disabled=True):
             state = self.state()
             changes = {}
@@ -399,6 +457,7 @@ class Store:
             return {'status': 'disabled', 'history_retained': True}
 
     def retrieve(self, now=None):
+        """Retorna somente canônicos vigentes (não expirados, não retirados) com citação de origem."""
         with self.locked():
             state = self.state()
             results = []
@@ -421,6 +480,7 @@ BACKUP = Path('/Users/fac/.hermes/bmk-backups/cs034-personal-learning')
 
 
 def check_runtime(system, home, hermes_home, profile):
+    """Guard de runtime: somente Darwin, /Users/fac, HERMES_HOME default. Recusa perfis nomeados."""
     if (system != 'Darwin' or home != '/Users/fac' or hermes_home != '/Users/fac/.hermes'
             or profile not in (None, '', 'default')):
         raise Refused('wrong_host_or_profile')
@@ -428,6 +488,11 @@ def check_runtime(system, home, hermes_home, profile):
 
 
 def main():
+    """CLI entry point. Ações: propose, cards, decide, revise, retrieve, recover, rollback.
+
+    propose/decide/revise recebem JSON por stdin (até 16KiB).
+    Saída sempre JSON. Erros retornam 'refused_or_unavailable' sem vazar payload.
+    """
     import argparse
     import platform
     import sys
